@@ -17,7 +17,7 @@ function patchit {
       - group: apps/v1
         kind: Deployment
         name: etcd-quorum-guard
-        namespace: openshift-machine-config-operator
+        namespace: openshift-etcd
         unmanaged: true
 EOF
 )" || return 1
@@ -25,6 +25,7 @@ EOF
     # scale down etcd-quorum-guard
     oc --kubeconfig ./auth/kubeconfig scale --replicas=1 deployment/etcd-quorum-guard -n openshift-etcd || return 1
 
+    oc --kubeconfig kubeconfig patch -n openshift-ingress-operator ingresscontroller/default --patch '{"spec":{"replicas": 1}}' --type=merge || return 1
     return 0
 }
 
