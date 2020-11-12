@@ -10,21 +10,6 @@ function patchit {
     # patch ingress operator to run a single router pod
     oc patch --kubeconfig ./auth/kubeconfig -n openshift-ingress-operator ingresscontroller/default --patch '{"spec":{"replicas": 1}}' --type=merge || return 1
 
-    # Mark etcd-quorum-guard as unmanaged
-    oc --kubeconfig ./auth/kubeconfig patch clusterversion/version --type='merge' -p "$(cat <<- EOF
- spec:
-    overrides:
-      - group: apps/v1
-        kind: Deployment
-        name: etcd-quorum-guard
-        namespace: openshift-etcd
-        unmanaged: true
-EOF
-)" || return 1
-
-    # scale down etcd-quorum-guard
-    oc --kubeconfig ./auth/kubeconfig scale --replicas=1 deployment/etcd-quorum-guard -n openshift-etcd || return 1
-
     return 0
 }
 
