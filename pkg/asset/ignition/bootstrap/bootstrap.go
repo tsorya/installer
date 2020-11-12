@@ -50,11 +50,13 @@ type bootstrapTemplateData struct {
 	EtcdCluster           string
 	PullSecret            string
 	ReleaseImage          string
+	ClusterProfile        string
 	Proxy                 *configv1.ProxyStatus
 	Registries            []sysregistriesv2.Registry
 	BootImage             string
 	ClusterDomain         string
 	PlatformData          platformTemplateData
+	SingleNode            bool
 }
 
 // platformTemplateData is the data to use to replace values in bootstrap
@@ -250,6 +252,13 @@ func (a *Bootstrap) getTemplateData(installConfig *types.InstallConfig, releaseI
 		platformData.VSphere = vsphere.GetTemplateData(installConfig.Platform.VSphere)
 	}
 
+	// Set cluster profile
+	clusterProfile := ""
+	if cp := os.Getenv("OPENSHIFT_INSTALL_EXPERIMENTAL_CLUSTER_PROFILE"); cp != "" {
+		logrus.Warnf("Found override for Cluster Profile: %q", cp)
+		clusterProfile = cp
+	}
+
 	return &bootstrapTemplateData{
 		AdditionalTrustBundle: installConfig.AdditionalTrustBundle,
 		FIPS:                  installConfig.FIPS,
@@ -261,6 +270,8 @@ func (a *Bootstrap) getTemplateData(installConfig *types.InstallConfig, releaseI
 		BootImage:             string(*rhcosImage),
 		ClusterDomain:         installConfig.ClusterDomain(),
 		PlatformData:          platformData,
+		ClusterProfile:        clusterProfile,
+		SingleNode:            *installConfig.ControlPlane.Replicas == 1,
 	}, nil
 }
 
@@ -332,7 +343,7 @@ func (a *Bootstrap) addSystemdUnits(uri string, templateData *bootstrapTemplateD
 		"chown-gatewayd-key.service":      {},
 		"systemd-journal-gatewayd.socket": {},
 		"approve-csr.service":             {},
-		"patch.service":             {},
+		"patch.service":                   {},
 		// baremetal & openstack platform services
 		"keepalived.service":        {},
 		"coredns.service":           {},
