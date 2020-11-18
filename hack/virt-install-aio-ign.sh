@@ -9,19 +9,22 @@ sudo cp "$1" "${IGNITION_CONFIG}"
 sudo chown qemu:qemu "${IGNITION_CONFIG}"
 sudo restorecon "${IGNITION_CONFIG}"
 
-RHCOS_IMAGE="/home/eran/Downloads/rhcos-46.82.202008181646-0-qemu.x86_64.qcow2"
-VM_NAME="aio-test"
+VM_INT=${VM_INT:-1}
+RHCOS_IMAGE="/tmp/rhcos-46.82.202008181646-0-qemu.x86_64.qcow2"
+VM_NAME="aio-test-${VM_INT}"
 OS_VARIANT="rhel8.1"
 RAM_MB="16384"
 DISK_GB="20"
+export NETWORK=${NETWORK:-test-net}
 
 virt-install \
     --connect qemu:///system \
     -n "${VM_NAME}" \
     -r "${RAM_MB}" \
+    --vcpus=6 \
     --os-variant="${OS_VARIANT}" \
     --import \
-    --network=network:test-net,mac=52:54:00:ee:42:e1 \
+    --network=network:${NETWORK},mac=52:54:00:ee:42:e${VM_INT} \
     --graphics=none \
     --disk "size=${DISK_GB},backing_store=${RHCOS_IMAGE}" \
     --qemu-commandline="-fw_cfg name=opt/com.coreos/config,file=${IGNITION_CONFIG}"

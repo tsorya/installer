@@ -1,0 +1,11 @@
+<network>
+  <name>routed225</name>
+  <forward mode='route' dev='enp2s0f0'/>
+  <bridge name='virbr225' stp='on' delay='2'/>
+  <ip address='192.168.225.1' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='192.168.225.141' end='192.168.225.254'/>
+      <host mac='52:54:00:ee:42:e1' name='bootstrap' ip='192.168.225.10'/>
+    </dhcp>
+  </ip>
+</network>

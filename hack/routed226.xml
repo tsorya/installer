@@ -1,0 +1,11 @@
+<network>
+  <name>routed226</name>
+  <forward mode='route' dev='enp2s0f0'/>
+  <bridge name='virbr226' stp='on' delay='2'/>
+  <ip address='192.168.140.1' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='192.168.140.2' end='192.168.140.254'/>
+      <host mac='52:54:00:ee:42:e2' name='master1' ip='192.168.140.10'/>
+    </dhcp>
+  </ip>
+</network>

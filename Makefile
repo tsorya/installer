@@ -10,6 +10,22 @@ generate:
 start:
 	./hack/virt-install-aio-ign.sh ./mydir/bootstrap.ign
 
+start_master:
+	VM_INT=2 ./hack/virt-install-aio-ign.sh ./mydir/master.ign
+
+create_none_nets:
+	./hack/virt-create-net-none.sh
+
+start_none_bootstrap:
+	./hack/update_bootstrap_ignition.py
+	VM_INT=1 NETWORK=routed225 ./hack/virt-install-aio-ign.sh ./mydir/bootstrap.ign
+
+start_none_master:
+	cp ./hack/master.ign ./mydir/ -f
+	VM_INT=2 NETWORK=routed226 ./hack/virt-install-aio-ign.sh ./mydir/master.ign
+clean_none:
+	./hack/virt-delete-none.sh || true
+	rm -rf mydir
 network:
 	./hack/virt-create-net.sh
 
