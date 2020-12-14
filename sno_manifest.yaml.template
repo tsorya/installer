@@ -1,0 +1,22 @@
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: after-reboot
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    storage:
+      files:
+        - contents:
+            source: data:text/plain;charset=utf-8;base64,REPLACE_AFTER_REBOOT_BASE64
+          mode: 365
+          overwrite: true
+          path: /usr/local/bin/after_reboot.sh
+    systemd:
+      units:
+        - name:  after_reboot.service
+          contents: "[Unit]\nDescription=Master Install\nWants=kubelet.service\nAfter=kubelet.service\n[Service]\nType=oneshot\nExecStart=/usr/local/bin/after_reboot.sh\n\nRestartSec=5s\n\n[Install]\nWantedBy=multi-user.target\n"
+          enabled: true

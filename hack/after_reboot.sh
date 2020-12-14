@@ -45,7 +45,9 @@ function clean {
   fi
 }
 
-wait_for_api
-approve_csr
-wait_for_cvo
-clean
+if [ -d "/etc/kubernetes/bootstrap-secrets" ]; then
+  wait_for_api
+  approve_csr
+  wait_for_cvo
+  clean
+fi
