@@ -24,7 +24,6 @@ if [ ! -f stop-etcd.done ]; then
 fi
 
 if [ ! -f master-ignition.done ]; then
-
   echo "Creating master ignition and writing it to disk"
   # Get the master ignition from MCS
   curl --header "Accept:'application/vnd.coreos.ignition+json;version=3.1.0 ;q=0.1'" \
@@ -36,25 +35,26 @@ if [ ! -f master-ignition.done ]; then
     --privileged \
     --volume "$PWD:/assets:z" \
     --volume "/var/lib/etcd/:/assets/etcd-data" \
-    --volume "/etc/kubernetes:/assets//kubernetes" \
+    --volume "/etc/kubernetes:/assets/kubernetes" \
     "${CLUSTER_BOOTSTRAP_IMAGE}" \
-    bootstrap-in-place --assets-dir /assets --input  /assets/bootstrap-in-place/master-update.fcc --output /assets/master.ign
+    bootstrap-in-place --asset-dir /assets --input  /assets/bootstrap-in-place/master-update.fcc --output /assets/master.ign
   touch master-ignition.done
 fi
 
+{{- if .SingleNode.CoreosInstallerArgs}}
+# The user specified .SingleNode.CoreosInstallerArgs so we complete the installation
 if [ ! -f coreos-installer.done ]; then
   # Write image + ignition to disk
-  echo "Getting installation disk"
-  INSTALL_DISK="$(lsblk | grep disk | awk 'NR==1{print $1}')"
-  echo "Executing coreos-installer with installation disk: $INSTALL_DISK"
-  coreos-installer install --insecure -i /opt/openshift/master.ign /dev/"$INSTALL_DISK"
+  echo "Executing coreos-installer with the following options: install -i /opt/openshift/master.ign {{.SingleNode.CoreosInstallerArgs}}"
+  coreos-installer install -i /opt/openshift/master.ign {{.SingleNode.CoreosInstallerArgs}}
 
   touch coreos-installer.done
 fi
 
 if [ ! -f reboot.done ]; then
-
   echo "Going to reboot"
   shutdown -r +1 "Bootstrap completed, server is going to reboot."
   touch reboot.done
 fi
+{{- end}}
+echo "Done"

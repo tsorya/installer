@@ -11,7 +11,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"text/template"
 	"time"
@@ -61,7 +60,7 @@ type bootstrapTemplateData struct {
 	Registries            []sysregistriesv2.Registry
 	BootImage             string
 	PlatformData          platformTemplateData
-	BootstrapInPlace      bool
+	SingleNode            *SingleNodeBootstrapInPlaceTemplateData
 }
 
 // platformTemplateData is the data to use to replace values in bootstrap
@@ -168,7 +167,7 @@ func (a *Bootstrap) Generate(dependencies asset.Parents) error {
 	if err != nil {
 		return err
 	}
-	if templateData.BootstrapInPlace {
+	if templateData.SingleNode.BootstrapInPlace {
 		err = a.addStorageFiles("/", "bootstrap/bootstrap-in-place", templateData)
 		if err != nil {
 			return err
@@ -216,7 +215,7 @@ func (a *Bootstrap) Generate(dependencies asset.Parents) error {
 		return errors.Wrap(err, "failed to Marshal Ignition config")
 	}
 	fileName := bootstrapIgnFilename
-	if templateData.BootstrapInPlace {
+	if templateData.SingleNode.BootstrapInPlace {
 		fileName = bootstrapInPlaceIgnFilename
 	}
 	a.File = &asset.File{
@@ -279,7 +278,7 @@ func (a *Bootstrap) getTemplateData(installConfig *types.InstallConfig, releaseI
 		logrus.Warnf("Found override for Cluster Profile: %q", cp)
 		clusterProfile = cp
 	}
-	bootstrapInPlace, err := isBootstrapInPlace(installConfig)
+	bootstrapInPlaceConfig, err := GetSingleNodeBootstrapInPlaceConfig(installConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -295,7 +294,7 @@ func (a *Bootstrap) getTemplateData(installConfig *types.InstallConfig, releaseI
 		BootImage:             string(*rhcosImage),
 		PlatformData:          platformData,
 		ClusterProfile:        clusterProfile,
-		BootstrapInPlace:      bootstrapInPlace,
+		SingleNode:            bootstrapInPlaceConfig,
 	}, nil
 }
 
@@ -638,21 +637,4 @@ func warnIfCertificatesExpired(config *igntypes.Config) {
 	if expiredCerts > 0 {
 		logrus.Warnf("Bootstrap Ignition-Config: %d certificates expired. Installation attempts with the created Ignition-Configs will possibly fail.", expiredCerts)
 	}
-}
-
-// isBootstrapInPlace checks for bootstrap in place env and validate the number of control plane replica is one
-func isBootstrapInPlace(installConfig *types.InstallConfig) (bootstrapInPlace bool, err error) {
-	if bootstrapInPlaceEnv := os.Getenv("OPENSHIFT_INSTALL_EXPERIMENTAL_BOOTSTRAP_IN_PLACE"); bootstrapInPlaceEnv != "" {
-		bootstrapInPlace, err = strconv.ParseBool(bootstrapInPlaceEnv)
-		if err != nil {
-			return bootstrapInPlace, err
-		}
-		if bootstrapInPlace {
-			if *installConfig.ControlPlane.Replicas != 1 {
-				return bootstrapInPlace, errors.Wrapf(err, "Found OPENSHIFT_INSTALL_EXPERIMENTAL_BOOTSTRAP_IN_PLACE env but control plane replica is not 1")
-			}
-			logrus.Warnf("Creating bootstrap in place configuration")
-		}
-	}
-	return bootstrapInPlace, err
 }
