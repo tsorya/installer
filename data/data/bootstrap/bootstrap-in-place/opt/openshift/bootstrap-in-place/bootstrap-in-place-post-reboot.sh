@@ -68,6 +68,7 @@ function clean {
   if [ -d "/etc/kubernetes/bootstrap-secrets" ]; then
      rm -rf /etc/kubernetes/bootstrap-*
   fi
+  systemctl disable bootstrap-in-place-post-reboot.service
 }
 
 wait_for_api
