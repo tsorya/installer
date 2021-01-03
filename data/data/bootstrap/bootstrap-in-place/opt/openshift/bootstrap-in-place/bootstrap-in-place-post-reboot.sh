@@ -47,3 +47,4 @@ wait_for_api
 approve_csr
 wait_for_cvo
 clean
+systemctl disable bootstrap-in-place.service

@@ -2,6 +2,7 @@
 Description=bootstrap-in-place
 Wants=kubelet.service
 After=kubelet.service
+ConditionPathExists=/etc/kubernetes/bootstrap-secrets/kubeconfig
 [Service]
 Type=oneshot
 ExecStart=/usr/local/bin/bootstrap-in-place-post-reboot.sh
@@ -10,4 +11,3 @@ RestartSec=5s
 
 [Install]
 WantedBy=multi-user.target
-
