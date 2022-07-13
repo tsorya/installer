@@ -2,13 +2,22 @@
 
 # shellcheck disable=SC1091  # using path on bootstrap machine
 . /usr/local/bin/bootstrap-service-record.sh
+. /usr/local/bin/bootstrap_node_ip.sh
 
-{{- if .MachineCidr }}
+
+# default, don't set node-ip flags or set ipv6
 {{- if .UseIPv6ForNodeIP }}
-KUBELET_IP=$(ip -6 route show | grep -i "{{.MachineCidr}}" | awk '{ if ($2 == "dev") { print $9; exit } }')
-{{- else}}
-KUBELET_IP=$(ip route show | grep -i "{{.MachineCidr}}" | awk '{ if ($2 == "dev") { print $9; exit } }')
+KUBELET_NODE_IP_PARAMS="--node-ip=:: \\"
+else
+KUBELET_NODE_IP_PARAMS=""
 {{- end}}
+
+
+{{- if .MachineCidr}
+ip=$(findIp "{{.MachineCidr}}" {{.UseIPv6ForNodeIP}})
+if (${ip}) {
+  KUBELET_NODE_IP_PARAMS="--node-ip=${ip} --address=${ip} \\"
+}
 {{- end}}
 
 /usr/bin/hyperkube \
@@ -17,14 +26,7 @@ KUBELET_IP=$(ip route show | grep -i "{{.MachineCidr}}" | awk '{ if ($2 == "dev"
     --container-runtime=remote \
     --container-runtime-endpoint=/var/run/crio/crio.sock \
     --runtime-request-timeout="${KUBELET_RUNTIME_REQUEST_TIMEOUT}" \
-{{- if .MachineCidr }}
-    --node-ip="${KUBELET_IP}" \
-    --address="${KUBELET_IP}" \
-{{- else}}
-{{- if .UseIPv6ForNodeIP }}
-    --node-ip=:: \
-{{- end}}
-{{- end}}
+    ${KUBELET_NODE_IP_PARAMS}
     --pod-manifest-path=/etc/kubernetes/manifests \
     --minimum-container-ttl-duration=6m0s \
     --cluster-domain=cluster.local \
