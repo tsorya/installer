@@ -4,21 +4,19 @@
 . /usr/local/bin/bootstrap-service-record.sh
 . /usr/local/bin/bootstrap_node_ip.sh
 
-
+KUBELET_NODE_IP_PARAMS=""
 # default, don't set node-ip flags or set ipv6
 {{- if .UseIPv6ForNodeIP }}
 KUBELET_NODE_IP_PARAMS="--node-ip=:: \\"
-else
-KUBELET_NODE_IP_PARAMS=""
-{{- end}}
+{{- end }}
 
 
-{{- if .MachineCidr}
+{{- if .MachineCidr }}
 ip=$(findIp "{{.MachineCidr}}" {{.UseIPv6ForNodeIP}})
 if (${ip}) {
   KUBELET_NODE_IP_PARAMS="--node-ip=${ip} --address=${ip} \\"
 }
-{{- end}}
+{{- end }}
 
 /usr/bin/hyperkube \
   kubelet \
