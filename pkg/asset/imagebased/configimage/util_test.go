@@ -7,7 +7,6 @@ import (
 	"k8s.io/utils/ptr"
 	"sigs.k8s.io/yaml"
 
-	aiv1beta1 "github.com/openshift/assisted-service/api/v1beta1"
 	"github.com/openshift/installer/pkg/asset/installconfig"
 	"github.com/openshift/installer/pkg/ipnet"
 	"github.com/openshift/installer/pkg/types"
@@ -103,9 +102,7 @@ func imageBasedConfig() *ImageBasedConfig {
 			},
 			Hostname:        "somehostname",
 			ReleaseRegistry: "quay.io",
-			NetworkConfig: aiv1beta1.NetConfig{
-				Raw: unmarshalJSON([]byte(rawNMStateConfig)),
-			},
+			NetworkConfig:   rawNMStateConfig,
 		},
 	}
 	return ibConfig

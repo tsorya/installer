@@ -313,7 +313,7 @@ func clusterConfiguration() *ClusterConfigurationBuilder {
 		InfraID:               clusterID.InfraID,
 		KubeadminPasswordHash: string(kubeadminPassword().PasswordHash),
 		PullSecret:            installConfig.Config.PullSecret,
-		RawNMStateConfig:      imageBasedConfig.Config.NetworkConfig.String(),
+		RawNMStateConfig:      imageBasedConfig.Config.NetworkConfig,
 		ReleaseRegistry:       imageBasedConfig.Config.ReleaseRegistry,
 		SSHKey:                installConfig.Config.SSHKey,
 	}

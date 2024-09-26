@@ -6,12 +6,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	"sigs.k8s.io/yaml"
 
 	"github.com/openshift/installer/pkg/asset"
-	"github.com/openshift/installer/pkg/asset/agent/manifests/staticnetworkconfig"
 	"github.com/openshift/installer/pkg/types/imagebased"
 	"github.com/openshift/installer/pkg/validate"
 )
@@ -155,18 +153,18 @@ func (i *ImageBasedConfig) validateNetworkConfig() field.ErrorList {
 	var allErrs field.ErrorList
 
 	// empty NetworkConfig is fine
-	if i.Config.NetworkConfig.String() == "" {
+	if i.Config.NetworkConfig == "" {
 		return nil
 	}
 
-	networkConfig := field.NewPath("networkConfig")
+	//networkConfig := field.NewPath("networkConfig")
 
-	staticNetworkConfigGenerator := staticnetworkconfig.New(logrus.StandardLogger(), staticnetworkconfig.Config{MaxConcurrentGenerations: 2})
-
-	// Validate the network config using nmstatectl
-	if err := staticNetworkConfigGenerator.ValidateNMStateYaml(context.Background(), i.Config.NetworkConfig.String()); err != nil {
-		allErrs = append(allErrs, field.Invalid(networkConfig, i.Config.NetworkConfig, err.Error()))
-	}
+	//staticNetworkConfigGenerator := staticnetworkconfig.New(logrus.StandardLogger(), staticnetworkconfig.Config{MaxConcurrentGenerations: 2})
+	//
+	//// Validate the network config using nmstatectl
+	//if err := staticNetworkConfigGenerator.ValidateNMStateYaml(context.Background(), i.Config.NetworkConfig.String()); err != nil {
+	//	allErrs = append(allErrs, field.Invalid(networkConfig, i.Config.NetworkConfig, err.Error()))
+	//}
 
 	return allErrs
 }

@@ -13,7 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/vincent-petithory/dataurl"
 
-	aiv1beta1 "github.com/openshift/assisted-service/api/v1beta1"
 	"github.com/openshift/installer/pkg/asset"
 	"github.com/openshift/installer/pkg/types"
 )
@@ -85,7 +84,7 @@ func TestIgnition_Generate(t *testing.T) {
 							},
 						}).
 						additionalTrustBundle(testCert).
-						networkConfig(aiv1beta1.NetConfig{Raw: []byte(testNetworkConfig)}).
+						networkConfig(testNetworkConfig).
 						ignitionConfigOverride(ignitionConfigOverride).
 						build(),
 				},

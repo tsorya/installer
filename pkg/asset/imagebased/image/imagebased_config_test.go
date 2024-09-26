@@ -363,7 +363,7 @@ func (icb *ImageBasedInstallationConfigBuilder) additionalTrustBundle(atb string
 	return icb
 }
 
-func (icb *ImageBasedInstallationConfigBuilder) networkConfig(nc aiv1beta1.NetConfig) *ImageBasedInstallationConfigBuilder {
+func (icb *ImageBasedInstallationConfigBuilder) networkConfig(nc string) *ImageBasedInstallationConfigBuilder {
 	icb.InstallationConfig.NetworkConfig = nc
 	return icb
 }

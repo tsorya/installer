@@ -101,7 +101,7 @@ func (cc *ClusterConfiguration) Generate(_ context.Context, dependencies asset.P
 		KubeadminPasswordHash: pwdHash,
 		Proxy:                 installConfig.Config.Proxy,
 		PullSecret:            installConfig.Config.PullSecret,
-		RawNMStateConfig:      imageBasedConfig.Config.NetworkConfig.String(),
+		RawNMStateConfig:      imageBasedConfig.Config.NetworkConfig,
 		ReleaseRegistry:       imageBasedConfig.Config.ReleaseRegistry,
 		SSHKey:                installConfig.Config.SSHKey,
 	}
