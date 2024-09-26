@@ -2,6 +2,7 @@ package image
 
 import (
 	"context"
+	"github.com/openshift/installer/pkg/asset/agent"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -54,7 +55,7 @@ func TestKargs_Generate(t *testing.T) {
 					},
 					Spec: v1beta1.AgentClusterInstallSpec{
 						ExternalPlatformSpec: &v1beta1.ExternalPlatformSpec{
-							PlatformName: "oci",
+							PlatformName: agent.ExternalPlatformNameOci,
 						},
 					},
 				},

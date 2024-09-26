@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/openshift/installer/pkg/asset/agent"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/openshift/assisted-image-service/pkg/isoeditor"
-	"github.com/openshift/assisted-service/models"
 	"github.com/openshift/installer/pkg/asset"
 	config "github.com/openshift/installer/pkg/asset/agent/agentconfig"
 	"github.com/openshift/installer/pkg/asset/agent/manifests"
@@ -76,7 +76,7 @@ func (a *AgentArtifacts) Generate(_ context.Context, dependencies asset.Parents)
 	}
 
 	var agentTuiFiles []string
-	if agentClusterInstall.GetExternalPlatformName() != string(models.PlatformTypeOci) {
+	if agentClusterInstall.GetExternalPlatformName() != agent.ExternalPlatformNameOci {
 		agentTuiFiles, err = a.fetchAgentTuiFiles(agentManifests.ClusterImageSet.Spec.ReleaseImage, agentManifests.GetPullSecretData(), registriesConf.MirrorConfig)
 		if err != nil {
 			return err
