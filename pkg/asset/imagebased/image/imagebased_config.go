@@ -272,7 +272,7 @@ func (i *ImageBasedInstallationConfig) validateNetworkConfig() field.ErrorList {
 	var allErrs field.ErrorList
 
 	// empty NetworkConfig is fine
-	if i.Config.NetworkConfig.String() == "" {
+	if len(i.Config.NetworkConfig.Raw) == 0 {
 		return nil
 	}
 
@@ -281,7 +281,7 @@ func (i *ImageBasedInstallationConfig) validateNetworkConfig() field.ErrorList {
 	staticNetworkConfigGenerator := staticnetworkconfig.New(logrus.StandardLogger(), staticnetworkconfig.Config{MaxConcurrentGenerations: 2})
 
 	// Validate the network config using nmstatectl.
-	if err := staticNetworkConfigGenerator.ValidateNMStateYaml(context.Background(), i.Config.NetworkConfig.String()); err != nil {
+	if err := staticNetworkConfigGenerator.ValidateNMStateYaml(context.Background(), string(i.Config.NetworkConfig.Raw)); err != nil {
 		allErrs = append(allErrs, field.Invalid(networkConfig, i.Config.NetworkConfig, err.Error()))
 	}
 

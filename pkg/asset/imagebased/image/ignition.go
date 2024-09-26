@@ -110,7 +110,7 @@ func (i *Ignition) Generate(_ context.Context, dependencies asset.Parents) error
 		Proxy:            ibiConfig.Proxy,
 		PullSecret:       ibiConfig.PullSecret,
 		IBIConfiguration: string(ibiConfigJSON),
-		NetworkConfig:    ibiConfig.NetworkConfig.String(),
+		NetworkConfig:    string(ibiConfig.NetworkConfig.Raw),
 	}
 
 	if len(registriesConf.Data) > 0 {
@@ -139,7 +139,7 @@ func (i *Ignition) Generate(_ context.Context, dependencies asset.Parents) error
 	}
 
 	enabledServices := defaultEnabledServices()
-	if ibiConfig.NetworkConfig.String() != "" {
+	if string(ibiConfig.NetworkConfig.Raw) != "" {
 		enabledServices = append(enabledServices, "network-config.service")
 	}
 	if err := bootstrap.AddSystemdUnits(config, "imagebased/systemd/units", ibiTemplateData, enabledServices); err != nil {
