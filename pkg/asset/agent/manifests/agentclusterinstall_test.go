@@ -104,7 +104,7 @@ func TestAgentClusterInstall_Generate(t *testing.T) {
 	installConfigWExternalOCIPlatform := getValidOptionalInstallConfig()
 	installConfigWExternalOCIPlatform.Config.Platform = types.Platform{
 		External: &externaltype.Platform{
-			PlatformName:           string(models.PlatformTypeOci),
+			PlatformName:           "oci",
 			CloudControllerManager: externaltype.CloudControllerManagerTypeExternal,
 		},
 	}
@@ -405,7 +405,7 @@ spec:
 					IngressVIP:   "192.168.111.4",
 					PlatformType: hiveext.ExternalPlatformType,
 					ExternalPlatformSpec: &hiveext.ExternalPlatformSpec{
-						PlatformName: string(models.PlatformTypeOci),
+						PlatformName: "oci",
 					},
 					ClusterDeploymentRef: corev1.LocalObjectReference{
 						Name: "ostest",
