@@ -7,12 +7,12 @@ import (
 	"os"
 	"strings"
 
-	configv1 "github.com/openshift/api/config/v1"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	"sigs.k8s.io/yaml"
 
+	configv1 "github.com/openshift/api/config/v1"
 	"github.com/openshift/installer/pkg/asset"
 	"github.com/openshift/installer/pkg/asset/installconfig"
 	"github.com/openshift/installer/pkg/types"
@@ -50,9 +50,8 @@ func (i *InstallConfig) Generate(_ context.Context, parents asset.Parents) error
 	return nil
 }
 
-// adding custom loadFromFile method to load the install-config.yaml file
-// as default one adds many default values that are not needed for image-based install config and can break our logic
-// such as machine network for example
+// loadFromFile method to load the install-config.yaml file.
+// Default one adds many default values that are not needed for image-based install config and can break our logic such as machine network for example.
 func (i *InstallConfig) loadFromFile(f asset.FileFetcher) (found bool, err error) {
 	file, err := f.FetchByName(InstallConfigFilename)
 	if err != nil {
@@ -105,7 +104,7 @@ func (i *InstallConfig) Load(f asset.FileFetcher) (bool, error) {
 }
 
 // in order to avoid the validation errors, we need to set the defaults and validate the configuration
-// though those defaults are not used in the image-based install config
+// though those defaults are not used in the image-based install config.
 func (i *InstallConfig) validateInstallConfig(installConfig *types.InstallConfig) field.ErrorList {
 	var allErrs field.ErrorList
 
