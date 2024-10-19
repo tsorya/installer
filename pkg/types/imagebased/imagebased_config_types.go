@@ -124,4 +124,18 @@ type InstallationConfig struct {
 
 	// SSHKey is the public Secure Shell (SSH) key to provide access to instances.
 	SSHKey string `json:"sshKey,omitempty"`
+
+	StorageConfig *StorageConfig `json:"storageConfig,omitempty"`
+}
+
+type StorageConfig struct {
+	Device     string      `json:"device"`
+	Partitions []Partition `json:"partition"`
+}
+
+type Partition struct {
+	Label  string `json:"label"`
+	Start  string `json:"start"`
+	Size   string `json:"size"`
+	Number int    `json:"number"`
 }
