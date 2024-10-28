@@ -130,7 +130,7 @@ type InstallationConfig struct {
 
 type ExtraPartition struct {
 	Device     string      `json:"device"`
-	Partitions []Partition `json:"partition"`
+	Partitions []Partition `json:"partitions"`
 }
 
 type Partition struct {
