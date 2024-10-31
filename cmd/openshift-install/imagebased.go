@@ -73,6 +73,7 @@ var (
 			&configimage.ConfigImage{},
 			&kubeconfig.ImageBasedAdminClient{},
 			&password.KubeadminPassword{},
+			&configimage.ClusterConfiguration{},
 		},
 	}
 
